@@ -1,0 +1,18 @@
+.week-days {
+  color: #ecb390;
+  font-size: 18px;
+}
+
+.week-temperatures {
+  color: #928a97;
+}
+
+.forecast-section {
+  text-align: center;
+}
+
+#forecast-icon {
+  display: block;
+  margin: 0px auto;
+  width: 60px;
+}
