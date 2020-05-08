@@ -1,80 +1,176 @@
-import React from "react";
-import "./Weather.css";
+import React, { useState } from "react";
+import CurrentWeather from "./CurrentWeather";
+import Forecast from "./Forecast";
+import axios from "axios";
 
-export default function Weather() {
-  let weatherData = {
-    cityName: "Lisbon",
-    temperature: 18,
-    unit: "C",
-    date: "Thursday 18:00",
-    description: "Partly Cloudy",
-    humidity: 80,
-    wind: 10,
-    windUnit: "m/s",
-    weatherIcon: "http://openweathermap.org/img/wn/10d@2x.png",
-    unitLink: "F"
-  };
+function Weather() {
+  let [city, setCity] = useState("");
+  let [hasResults, setHasResults] = useState(false);
+  let [weatherResults, setWeatherResults] = useState(Object);
+  let [loading, setLoading] = useState(false);
+
+  function getCurrentLocationWeather() {
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(function (position) {
+      getCityWeather(
+        null,
+        position.coords.latitude,
+        position.coords.longitude,
+        "metric"
+      );
+    });
+  }
+
+  function getCityWeather(city, latitude, longitude, unitSystem) {
+    let key = "491127d7fac80a30edab9961c6790b41";
+    let url;
+    if (city) {
+      url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${key}&&units=${unitSystem}`;
+    } else {
+      url = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${key}&&units=${unitSystem}`;
+    }
+
+    axios.get(url).then(updateWeather);
+  }
+  function updateWeather(response) {
+    if (response) {
+      setWeatherResults({
+        cityName: response.data.city.name,
+        temperature: Math.round(response.data.list[0].main.temp),
+        temperatureUnit: "C",
+        //temperatureUnit: unitSystem === "metric" ? "C" : "F",
+        description: response.data.list[0].weather[0].description,
+        humidity: response.data.list[0].main.humidity,
+        wind: Math.round(response.data.list[0].wind.speed),
+        windUnit: "m/s",
+        //windUnit: unitSystem === "metric" ? "m/s" : "mph",
+        dateTime: formatDate(response.data.list[0].dt),
+        weatherIcon: `http://openweathermap.org/img/wn/${response.data.list[0].weather[0].icon}@2x.png`,
+      });
+    }
+    setCity("");
+    setLoading(false);
+    setHasResults(true);
+  }
+
+  function formatDate(timestamp) {
+    let date = new Date(timestamp * 1000);
+    let days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    let weekDay = days[date.getDay()];
+    let hour = date.getHours();
+    let minutes = date.getMinutes();
+    return `${weekDay} ${addZero(hour)}:${addZero(minutes)}`;
+  }
+
+  function addZero(i) {
+    if (i < 10) {
+      i = "0" + i;
+    }
+    return i;
+  }
+
+  function updateCity(event) {
+    let newCity = event.target.value.trim();
+    if (newCity && newCity.length > 0) {
+      setCity(newCity);
+    }
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    if (city) {
+      // getCityWeather(city, null, null, "metric");
+      //dummy data:
+      setLoading(true);
+      setWeatherResults({
+        cityName: city,
+        temperature: 18,
+        temperatureUnit: "C",
+        //temperatureUnit: unitSystem === "metric" ? "C" : "F",
+        description: "Broken Clouds",
+        humidity: 77,
+        wind: 3.6,
+        windUnit: "m/s",
+        //windUnit: unitSystem === "metric" ? "m/s" : "mph",
+        dateTime: "Tuesday at 10:00",
+        weatherIcon: "http://openweathermap.org/img/wn/10d@2x.png",
+      });
+      setLoading(false);
+      setCity("");
+      setHasResults(true);
+
+      event.target.reset();
+    }
+  }
+
+  function Spinner() {
+    return (
+      <div className="d-flex align-items-center">
+        <strong>Loading...</strong>
+        <div
+          className="ml-auto spinner-border spinner-border-sm text-secondary"
+          role="status"
+          aria-hidden="true"
+        ></div>
+      </div>
+    );
+  }
 
   return (
     <div className="Weather">
       <div className="row">
-        <div className="col-12">
-          <div className="current-city">
-            <h2 id="current-city">Lisbon</h2>
-          </div>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-6">
-          <div className="current-day-time">
-            Last Updated on{" "}
-            <span id="current-day-time">{weatherData.date}</span>
-          </div>
-          <div id="weather-description" className="current-weather">
-            {weatherData.description}
-          </div>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-7 current-temperature">
-          <div className="row">
-            <div className="col-sm-3">
-              <img
-                src={weatherData.weatherIcon}
-                alt={weatherData.description}
-                title={weatherData.description}
-                id="weather-icon"
-              />
+        <div className="col mr-0">
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <div className="row">
+                <div className="col-6">
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="cityName"
+                    placeholder="Type a city..."
+                    autoComplete="off"
+                    autoFocus="on"
+                    maxLength="100"
+                    onChange={updateCity}
+                  />
+                </div>
+                <input
+                  type="submit"
+                  className="btn btn-outline-secondary ml-1 mr-3"
+                  id="search-location"
+                  value="Search"
+                />
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  id="current-location"
+                  onClick={getCurrentLocationWeather}
+                >
+                  Current City
+                </button>
+              </div>
             </div>
-            <div className="col-sm-9">
-              <h1>
-                <span id="current-temperature">
-                  {weatherData.temperature} º
-                </span>
-                <span id="current-unit">{weatherData.unit}</span>
-                <span className="units">
-                  {" "}
-                  |
-                  <a href="/" id="unit-link">
-                    {weatherData.unitLink}
-                  </a>
-                </span>
-              </h1>
-            </div>
-          </div>
-        </div>
-        <div className="col-5 weather-stats">
-          <div className="row">
-            Humidity:&nbsp;
-            <span id="humidity">{weatherData.humidity}%</span>
-          </div>
-          <div className="row">
-            Wind:&nbsp;
-            <span id="wind">{weatherData.wind}</span>
-            <span id="wind-unit">{weatherData.windUnit}</span>
-          </div>
+          </form>
         </div>
       </div>
+      {loading ? (
+        <Spinner />
+      ) : hasResults ? (
+        <CurrentWeather weatherData={weatherResults} />
+      ) : (
+        ""
+      )}
     </div>
   );
 }
+
+export default Weather;

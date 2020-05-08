@@ -1,0 +1,41 @@
+.CurrentWeather .current-city {
+  text-align: left;
+  padding: 0px;
+}
+
+.CurrentWeather .current-city {
+  color: #769fcd;
+}
+
+.CurrentWeather .current-day-time,
+.CurrentWeather .current-weather,
+.CurrentWeather .current-temperature,
+.CurrentWeather .weather-stats {
+  color: #928a97;
+}
+
+.CurrentWeather .current-temperature,
+.CurrentWeather .weather-stats {
+  margin-top: 20px;
+}
+
+.CurrentWeather .weather-stats .row {
+  font-size: 13px;
+  margin-bottom: -3px;
+}
+
+.CurrentWeather .units {
+  font-size: 16px;
+  position: relative;
+  top: -15px;
+}
+
+.CurrentWeather .current-weather {
+  text-transform: capitalize;
+  margin-bottom: 30px;
+}
+
+.CurrentWeather #weather-icon {
+  margin-top: -23px;
+  margin-left: -10px;
+}

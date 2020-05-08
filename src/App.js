@@ -1,7 +1,8 @@
 import React from "react";
+import "bootstrap/dist/css/bootstrap.css";
 import Header from "./Header";
-import Search from "./Search";
 import Weather from "./Weather";
+import CurrentWeather from "./CurrentWeather";
 import Forecast from "./Forecast";
 import Footer from "./Footer";
 import "./App.css";
@@ -12,10 +13,7 @@ export default function App() {
       <div className="container">
         <div className="app-container">
           <Header />
-          <Search />
           <Weather />
-          <br />
-          <Forecast />
         </div>
         <Footer />
       </div>

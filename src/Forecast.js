@@ -1,13 +1,13 @@
 import React from "react";
 import "./Forecast.css";
 
-export default function Forecast() {
+function Forecast() {
   let forecast = {
     forecastDays: ["Fri", "Sat", "Sun", "Mon", "Tue"],
     forecastIcons: ["http://openweathermap.org/img/wn/10d@2x.png"],
     description: "Partly Cloudy",
     forecastTemperatures: [19],
-    currentUnit: "C"
+    currentUnit: "C",
   };
 
   return (
@@ -96,3 +96,5 @@ export default function Forecast() {
     </div>
   );
 }
+
+export default Forecast;
