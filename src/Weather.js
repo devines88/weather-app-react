@@ -87,26 +87,7 @@ function Weather() {
   function handleSubmit(event) {
     event.preventDefault();
     if (city) {
-      // getCityWeather(city, null, null, "metric");
-      //dummy data:
-      setLoading(true);
-      setWeatherResults({
-        cityName: city,
-        temperature: 18,
-        temperatureUnit: "C",
-        //temperatureUnit: unitSystem === "metric" ? "C" : "F",
-        description: "Broken Clouds",
-        humidity: 77,
-        wind: 3.6,
-        windUnit: "m/s",
-        //windUnit: unitSystem === "metric" ? "m/s" : "mph",
-        dateTime: "Tuesday at 10:00",
-        weatherIcon: "http://openweathermap.org/img/wn/10d@2x.png",
-      });
-      setLoading(false);
-      setCity("");
-      setHasResults(true);
-
+      getCityWeather(city, null, null, "metric");
       event.target.reset();
     }
   }
