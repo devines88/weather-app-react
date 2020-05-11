@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import CurrentWeather from "./CurrentWeather";
 import Forecast from "./Forecast";
+import Spinner from "./Spinner";
 import axios from "axios";
 
 function Weather() {
@@ -8,20 +9,21 @@ function Weather() {
   let [hasResults, setHasResults] = useState(false);
   let [weatherResults, setWeatherResults] = useState(Object);
   let [loading, setLoading] = useState(false);
+  let unitSystem = "metric";
 
   function getCurrentLocationWeather() {
-    setLoading(true);
     navigator.geolocation.getCurrentPosition(function (position) {
       getCityWeather(
         null,
         position.coords.latitude,
         position.coords.longitude,
-        "metric"
+        unitSystem
       );
     });
   }
 
   function getCityWeather(city, latitude, longitude, unitSystem) {
+    setLoading(true);
     let key = "491127d7fac80a30edab9961c6790b41";
     let url;
     if (city) {
@@ -37,13 +39,10 @@ function Weather() {
       setWeatherResults({
         cityName: response.data.city.name,
         temperature: Math.round(response.data.list[0].main.temp),
-        temperatureUnit: "C",
-        //temperatureUnit: unitSystem === "metric" ? "C" : "F",
+        unitSystem: unitSystem,
         description: response.data.list[0].weather[0].description,
         humidity: response.data.list[0].main.humidity,
         wind: Math.round(response.data.list[0].wind.speed),
-        windUnit: "m/s",
-        //windUnit: unitSystem === "metric" ? "m/s" : "mph",
         dateTime: formatDate(response.data.list[0].dt),
         weatherIcon: `http://openweathermap.org/img/wn/${response.data.list[0].weather[0].icon}@2x.png`,
       });
@@ -87,22 +86,17 @@ function Weather() {
   function handleSubmit(event) {
     event.preventDefault();
     if (city) {
-      getCityWeather(city, null, null, "metric");
+      getCityWeather(city, null, null, unitSystem);
       event.target.reset();
     }
   }
 
-  function Spinner() {
-    return (
-      <div className="d-flex align-items-center">
-        <strong>Loading...</strong>
-        <div
-          className="ml-auto spinner-border spinner-border-sm text-secondary"
-          role="status"
-          aria-hidden="true"
-        ></div>
-      </div>
-    );
+  function handleChildClick(cityName, units) {
+    setCity(cityName);
+    console.log(city);
+    unitSystem = units;
+    console.log(unitSystem);
+    getCityWeather(city, null, null, unitSystem);
   }
 
   return (
@@ -146,7 +140,10 @@ function Weather() {
       {loading ? (
         <Spinner />
       ) : hasResults ? (
-        <CurrentWeather weatherData={weatherResults} />
+        <CurrentWeather
+          weatherData={weatherResults}
+          onChildClick={handleChildClick}
+        />
       ) : (
         ""
       )}

@@ -1,7 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import "./CurrentWeather.css";
 
 function CurrentWeather(props) {
+  function convertUnitSystem(event) {
+    event.preventDefault();
+    let units =
+      props.weatherData.unitSystem === "metric" ? "imperial" : "metric";
+    props.onChildClick(props.weatherData.cityName, units);
+  }
+
   return (
     <div className="CurrentWeather">
       <div className="row">
@@ -39,13 +46,13 @@ function CurrentWeather(props) {
                   {props.weatherData.temperature} º
                 </span>
                 <span id="current-unit">
-                  {props.weatherData.temperatureUnit}
+                  {props.weatherData.unitSystem === "metric" ? "C" : "F"}
                 </span>
                 <span className="units">
                   {" "}
                   |
-                  <a href="/" id="unit-link">
-                    F
+                  <a href="/" id="unit-link" onClick={convertUnitSystem}>
+                    {props.weatherData.unitSystem === "metric" ? "F" : "C"}
                   </a>
                 </span>
               </h1>
@@ -60,7 +67,9 @@ function CurrentWeather(props) {
           <div className="row">
             Wind:&nbsp;
             <span id="wind">{props.weatherData.wind}</span>
-            <span id="wind-unit">{props.weatherData.windUnit}</span>
+            <span id="wind-unit">
+              {props.weatherData.unitSystem === "metric" ? "m/s" : "mph"}
+            </span>
           </div>
         </div>
       </div>
