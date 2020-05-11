@@ -47,7 +47,6 @@ function Weather() {
         weatherIcon: `http://openweathermap.org/img/wn/${response.data.list[0].weather[0].icon}@2x.png`,
       });
     }
-    setCity("");
     setLoading(false);
     setHasResults(true);
   }
