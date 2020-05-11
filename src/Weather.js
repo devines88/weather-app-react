@@ -13,6 +13,7 @@ function Weather() {
 
   function getCurrentLocationWeather() {
     navigator.geolocation.getCurrentPosition(function (position) {
+      setLoading(true);
       getCityWeather(
         null,
         position.coords.latitude,
@@ -23,7 +24,6 @@ function Weather() {
   }
 
   function getCityWeather(city, latitude, longitude, unitSystem) {
-    setLoading(true);
     let key = "491127d7fac80a30edab9961c6790b41";
     let url;
     if (city) {
@@ -85,6 +85,7 @@ function Weather() {
   function handleSubmit(event) {
     event.preventDefault();
     if (city) {
+      setLoading(true);
       getCityWeather(city, null, null, unitSystem);
       event.target.reset();
     }
@@ -92,9 +93,8 @@ function Weather() {
 
   function handleChildClick(cityName, units) {
     setCity(cityName);
-    console.log(city);
     unitSystem = units;
-    console.log(unitSystem);
+    setLoading(true);
     getCityWeather(city, null, null, unitSystem);
   }
 
